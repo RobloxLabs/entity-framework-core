@@ -29,6 +29,9 @@ namespace Roblox.EntityFrameworkCore
                 case DatabaseType.Sqlite:
                     options.UseSqlite(db.ConnectionString);
                     break;
+                case DatabaseType.MySql:
+                    options.UseMySQL(db.ConnectionString);
+                    break;
             }
         }
         
