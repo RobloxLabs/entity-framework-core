@@ -6,12 +6,15 @@
     /// <typeparam name="TIndex"></typeparam>
     public interface IRobloxEntity<TIndex>
     {
-        public TIndex ID { get; }
+        TIndex ID { get; }
     }
 
     /// <inheritdoc/>
     public interface IRobloxEntity<TEntity, TIndex> : IRobloxEntity<TIndex>
     {
+        // C# 11.0
+#if NET7_0_OR_GREATER
         public static abstract TEntity Get(TIndex id);
+#endif
     }
 }

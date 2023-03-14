@@ -10,7 +10,7 @@ namespace Roblox.EntityFrameworkCore
     public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IComparable<TIndex>
-        where TDatabase : IGlobalDatabase
+        where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         #region | Entity Properties |
 
@@ -188,6 +188,6 @@ namespace Roblox.EntityFrameworkCore
 
         #endregion | BIZ Methods |
 
-        protected static RobloxDbContext<TEntity, TIndex, TDatabase> GetDbContext() => new();
+        protected static RobloxDbContext<TEntity, TIndex, TDatabase> GetDbContext() => new RobloxDbContext<TEntity, TIndex, TDatabase>();
     }
 }

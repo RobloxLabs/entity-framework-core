@@ -5,7 +5,14 @@ namespace Roblox.EntityFrameworkCore
 {
     public class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
         where TEntity : class, IRobloxEntity<TIndex>
-        where TDatabase : IGlobalDatabase // (has static ConnectionString property)
+
+        where TDatabase :
+        // C# 11.0
+#if NET7_0_OR_GREATER
+        IGlobalDatabase // (has static ConnectionString property)
+#else
+        GlobalDatabase<TDatabase>, new()
+#endif
     {
         private IGlobalDatabase _Database;
 
@@ -14,7 +21,12 @@ namespace Roblox.EntityFrameworkCore
 
         public RobloxDbContext()
         {
+            // C# 11.0
+#if NET7_0_OR_GREATER
             _Database = TDatabase.Singleton;
+#else
+            _Database = new TDatabase();
+#endif
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
