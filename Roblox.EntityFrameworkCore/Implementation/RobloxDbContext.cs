@@ -3,8 +3,8 @@ using Roblox.Databases;
 
 namespace Roblox.EntityFrameworkCore
 {
-    public class RobloxDbContext<TEntity, TDatabase> : DbContext
-        where TEntity : class
+    public class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
+        where TEntity : class, IRobloxEntity<TIndex>
         where TDatabase : IGlobalDatabase // (has static ConnectionString property)
     {
         private IGlobalDatabase _Database;
@@ -39,9 +39,24 @@ namespace Roblox.EntityFrameworkCore
         {
             var entity = modelBuilder.Entity<TEntity>();
 
-            entity.Property("Created").HasDefaultValueSql("getdate()");
-            entity.Property("Updated").HasDefaultValueSql("getdate()");
-            
+            var db = _Database;
+            switch (db.DbType)
+            {
+                case DatabaseType.Mssql:
+                    entity.Property(e => e.ID).UseIdentityColumn();
+                    break;
+                default:
+                    /* NOTE: Generates some sub-optimal SQL (MySQL):
+                      INSERT INTO `CreatorTypes` (`Created`, `Updated`, `Value`)
+                      VALUES (@p0, @p1, @p2);
+                      SELECT `ID`
+                      FROM `CreatorTypes`
+                      WHERE ROW_COUNT() = 1 AND `ID` = LAST_INSERT_ID();
+                     */
+                    entity.Property(e => e.ID).ValueGeneratedOnAdd();
+                    break;
+            }
+
             // Should ideally make the table name $"{nameof(TEntity)}s" if it's not already set in the entity
             var tableName = entity.Metadata.GetTableName();
             if (string.IsNullOrEmpty(tableName) || tableName == nameof(Table))

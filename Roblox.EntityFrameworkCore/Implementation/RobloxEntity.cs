@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,7 @@ using Roblox.Databases;
 namespace Roblox.EntityFrameworkCore
 {
     public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
-        where TEntity : class, IRobloxEntity<TEntity, TIndex>, new()
+        where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : IGlobalDatabase
     {
@@ -72,7 +71,7 @@ namespace Roblox.EntityFrameworkCore
 
             if (result == null)
             {
-                dalCreator();
+                result = dalCreator();
             }
 
             return result;
@@ -91,17 +90,16 @@ namespace Roblox.EntityFrameworkCore
         {
             using (var db = GetDbContext())
             {
-                db.Table.Add(this as TEntity);
+                db.Table.Add((TEntity)this);
                 db.SaveChanges();
             }
-            // TODO: get ID of newly inserted entity
         }
 
         private void DoUpdate()
         {
             using (var db = GetDbContext())
             {
-                db.Table.Update(this as TEntity);
+                db.Table.Update((TEntity)this);
                 db.SaveChanges();
             }
         }
@@ -110,7 +108,7 @@ namespace Roblox.EntityFrameworkCore
         {
             using (var db = GetDbContext())
             {
-                db.Table.Remove(this as TEntity);
+                db.Table.Remove((TEntity)this);
                 db.SaveChanges();
             }
         }
@@ -169,6 +167,6 @@ namespace Roblox.EntityFrameworkCore
 
         #endregion | BIZ Methods |
 
-        protected static RobloxDbContext<TEntity, TDatabase> GetDbContext() => new();
+        protected static RobloxDbContext<TEntity, TIndex, TDatabase> GetDbContext() => new();
     }
 }
