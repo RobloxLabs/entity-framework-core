@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Roblox.Databases;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Roblox.EntityFrameworkCore
 {
@@ -53,6 +54,11 @@ namespace Roblox.EntityFrameworkCore
             );
         }
 
+        protected static TEntity DoMustGetBy(Func<TEntity, bool> query)
+        {
+            return DoGetBy(query) ?? throw new InvalidOperationException($"Failed to load {typeof(TEntity).Name}.");
+        }
+
         protected static ICollection<TEntity> DoMultiGetBy(Func<TEntity, bool> query)
         {
             return DoQuery(
@@ -63,6 +69,11 @@ namespace Roblox.EntityFrameworkCore
         private static TEntity DoGetById(TIndex id)
         {
             return DoGetBy(entity => entity.ID.Equals(id));
+        }
+
+        private static TEntity DoMustGetById(TIndex id)
+        {
+            return DoMustGetBy(entity => entity.ID.Equals(id));
         }
 
         protected static TEntity DoGetOrCreate(Func<TEntity> dalGetter, Func<TEntity> dalCreator)
@@ -143,6 +154,17 @@ namespace Roblox.EntityFrameworkCore
         public static TEntity Get(TIndex id)
         {
             return DoGetById(id);
+        }
+
+        /// <summary>
+        /// Gets the entity associated with the given ID, or throws an exception.
+        /// </summary>
+        /// <param name="id">The ID to fetch the entity by</param>
+        /// <returns>The entity associated with the given ID</returns>
+        /// <exception cref="InvalidOperationException">The entity with the given ID doesn't exist</exception>
+        public static TEntity MustGet(TIndex id)
+        {
+            return DoMustGetById(id);
         }
 
         public virtual void Save()
