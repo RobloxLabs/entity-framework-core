@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Roblox.Databases;
-using Google.Protobuf.WellKnownTypes;
 
 namespace Roblox.EntityFrameworkCore
 {
