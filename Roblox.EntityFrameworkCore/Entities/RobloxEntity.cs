@@ -110,10 +110,13 @@ namespace Roblox.EntityFrameworkCore
 
         #endregion | Data Access Methods |
 
-        private static readonly IEntityFactory<TEntity, TIndex> _Helper
-            = new CacheableEntityFactory<TEntity, TIndex, TDatabase>();
+        public static IEntityFactory<TEntity, TIndex> GetHelper()
+            => new CacheableEntityFactory<TEntity, TIndex, TDatabase>();
 
-        private static readonly IRobloxEntityFactory<TEntity, TIndex> _Factory
-            = new RobloxEntityFactory<TEntity, TIndex>(_Helper);
+        public static IRobloxEntityFactory<TEntity, TIndex> GetFactory()
+            => new RobloxEntityFactory<TEntity, TIndex>(_Helper);
+
+        private static readonly IEntityFactory<TEntity, TIndex> _Helper = GetHelper();
+        private static readonly IRobloxEntityFactory<TEntity, TIndex> _Factory = GetFactory();
     }
 }
