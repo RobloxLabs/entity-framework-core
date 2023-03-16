@@ -30,9 +30,16 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// <returns>The entity with the given Value</returns>
         public static TEntity Get(string value)
         {
-            return DoGetBy(
-                (entity) => entity.Value == value
-            );
+            TEntity result = null;
+
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                result = GetBy(
+                    (entity) => entity.Value == value
+                );
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -42,7 +49,7 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// <returns>A new or the pre-existing entity with the given Value</returns>
         public static TEntity GetOrCreate(string value)
         {
-            return DoGetOrCreate(
+            return GetOrCreate(
                 () => Get(value),
                 () => Create(value)
             );
@@ -55,6 +62,8 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// <returns>The created entity</returns>
         public static TEntity Create(string value)
         {
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
+
             var result = new TEntity
             {
                 Value = value
