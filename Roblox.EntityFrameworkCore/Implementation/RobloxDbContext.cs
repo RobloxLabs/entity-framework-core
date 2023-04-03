@@ -3,7 +3,7 @@ using Roblox.Databases;
 
 namespace Roblox.EntityFrameworkCore
 {
-    public class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
+    public sealed class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
         where TEntity : class, IRobloxEntity<TIndex>
 
         where TDatabase :
@@ -11,7 +11,7 @@ namespace Roblox.EntityFrameworkCore
 #if NET7_0_OR_GREATER
         IGlobalDatabase // (has static ConnectionString property)
 #else
-        GlobalDatabase<TDatabase>, new()
+        GlobalDatabase<TDatabase>, new() // (can create new instance)
 #endif
     {
         private IGlobalDatabase _Database;

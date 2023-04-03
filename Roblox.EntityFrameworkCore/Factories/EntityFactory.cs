@@ -6,10 +6,8 @@ using Roblox.Databases;
 
 namespace Roblox.EntityFrameworkCore.Factories
 {
-    /// <summary>
-    /// A generic entity factory with no caching.
-    /// </summary>
-    public class GenericEntityFactory<TEntity, TIndex, TDatabase> : IEntityFactory<TEntity, TIndex>
+    /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}"/>
+    public class EntityFactory<TEntity, TIndex, TDatabase> : IEntityFactory<TEntity, TIndex>
         where TEntity : class, IRobloxEntity<TIndex>
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
@@ -55,22 +53,24 @@ namespace Roblox.EntityFrameworkCore.Factories
             }
         }
 
-        public virtual TEntity GetEntityByPredicate(Func<TEntity, bool> predicate)
+        public virtual TEntity GetEntityByPredicate(Predicate<TEntity> predicate)
         {
+            var pred = new Func<TEntity, bool>(predicate);
             return ReadEntity(
-                (table) => table.FirstOrDefault(predicate)
+                (table) => table.FirstOrDefault(pred)
             );
         }
 
-        public virtual TEntity MustGetEntityByPredicate(Func<TEntity, bool> predicate)
+        public virtual TEntity MustGetEntityByPredicate(Predicate<TEntity> predicate)
         {
             return GetEntityByPredicate(predicate) ?? throw new InvalidOperationException($"Failed to load {typeof(TEntity).Name}.");
         }
 
-        public virtual ICollection<TEntity> MultiGetEntityByPredicate(Func<TEntity, bool> predicate)
+        public virtual ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate)
         {
+            var pred = new Func<TEntity, bool>(predicate);
             return ReadEntity(
-                (table) => table.Where(predicate)
+                (table) => table.Where(pred)
             ).ToList();
         }
 

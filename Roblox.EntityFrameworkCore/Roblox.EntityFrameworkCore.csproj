@@ -15,4 +15,10 @@
     <ProjectReference Include="..\..\Databases\Roblox.Databases\Roblox.Databases.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Roblox.EntityFrameworkCore.Unit.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

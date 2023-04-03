@@ -9,7 +9,7 @@ namespace Roblox.EntityFrameworkCore.Factories
     /// <summary>
     /// An entity factory that references queries against a cache.
     /// </summary>
-    public class CacheableEntityFactory<TEntity, TIndex, TDatabase> : GenericEntityFactory<TEntity, TIndex, TDatabase>
+    public class CacheableEntityFactory<TEntity, TIndex, TDatabase> : EntityFactory<TEntity, TIndex, TDatabase>
         where TEntity : class, IRobloxEntity<TIndex>
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
@@ -36,17 +36,17 @@ namespace Roblox.EntityFrameworkCore.Factories
             base.DeleteEntity(entity);
         }
 
-        public override TEntity GetEntityByPredicate(Func<TEntity, bool> predicate)
+        public override TEntity GetEntityByPredicate(Predicate<TEntity> predicate)
         {
             return base.GetEntityByPredicate(predicate);
         }
 
-        public override TEntity MustGetEntityByPredicate(Func<TEntity, bool> predicate)
+        public override TEntity MustGetEntityByPredicate(Predicate<TEntity> predicate)
         {
             return base.MustGetEntityByPredicate(predicate);
         }
 
-        public override ICollection<TEntity> MultiGetEntityByPredicate(Func<TEntity, bool> predicate)
+        public override ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate)
         {
             return base.MultiGetEntityByPredicate(predicate);
         }

@@ -2,10 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Roblox.Databases;
+using Roblox.EntityFrameworkCore.Entities;
 using Roblox.EntityFrameworkCore.Factories;
 
 namespace Roblox.EntityFrameworkCore
 {
+    /// <summary>
+    /// A base class for all ROBLOX entities that reduces the absurd amount
+    /// of boilerplate code of the old system.
+    /// </summary>
+    /// <remarks>
+    /// Acts as a static wrapper of the <see cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}"/> class.
+    /// </remarks>
+    /// <typeparam name="TEntity">The entity's type.</typeparam>
+    /// <typeparam name="TIndex">The type to use for the entity's index.</typeparam>
+    /// <typeparam name="TDatabase">The database to use for the entity.</typeparam>
     public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IComparable<TIndex>
@@ -13,64 +24,53 @@ namespace Roblox.EntityFrameworkCore
     {
         #region | Entity Properties |
 
-        /// <summary>
-        /// The timestamp to mark when the entity was created
-        /// </summary>
-        public DateTime Created { get; private set; }
+        public DateTime Created { get; internal set; }
+        public DateTime Updated { get; internal set; }
 
-        /// <summary>
-        /// The timestamp to mark when the entity was last updated
-        /// </summary>
-        public DateTime Updated { get; private set; }
-
-        /// <summary>
-        /// The ID of the entity
-        /// </summary>
-        /// <remarks>
-        /// Put below Created & Updated to have serialized versions of
-        /// the entity look less bad.
-        /// </remarks>
+        // Put below Created & Updated to have serialized versions of
+        // the entity look less bad.
         [Key]
-        public TIndex ID { get; private set; }
+        public TIndex ID
+        {
+            get;
+#if NET5_0_OR_GREATER
+            internal init;
+#else
+            private set;
+#endif
+        }
 
-        #endregion | Entity Properties |
+#endregion | Entity Properties |
 
         #region | Entity Methods |
 
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Save(TEntity)"/>
         public virtual void Save()
-        {
-            _Factory.Save(
-                (TEntity)this,
-                () =>
-                {
-                    this.Created = DateTime.Now;
-                    this.Updated = this.Created;
-                },
-                () =>
-                {
-                    this.Updated = DateTime.Now;
-                }
-            );
-        }
+            => _Factory.Save((TEntity)this);
 
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Delete(TEntity)"/>
         public virtual void Delete()
-        {
-            _Factory.Delete((TEntity)this);
-        }
+            => _Factory.Delete((TEntity)this);
 
         #endregion | Entity Methods |
 
         #region | Data Access Methods |
 
-        /// <summary>
-        /// Gets the entity associated with the given ID.
-        /// </summary>
-        /// <param name="id">The ID to fetch the entity by</param>
-        /// <returns>The entity associated with the given ID</returns>
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetBy"/>
+        protected static TEntity GetBy(Predicate<TEntity> predicate)
+            => _Factory.GetBy(predicate);
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MustGetBy"/>
+        protected static TEntity MustGetBy(Predicate<TEntity> predicate)
+            => _Factory.MustGetBy(predicate);
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy"/>
+        protected static ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate)
+            => _Factory.MultiGetBy(predicate);
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Get(TIndex)"/>
         public static TEntity Get(TIndex id)
-        {
-            return _Factory.Get(id);
-        }
+            => _Factory.Get(id);
 
         /// <inheritdoc cref="Get(TIndex)"/>
         public static TEntity Get(TIndex? id)
@@ -80,43 +80,21 @@ namespace Roblox.EntityFrameworkCore
             return null;
         }
 
-        /// <summary>
-        /// Gets the entity associated with the given ID, or throws an exception.
-        /// </summary>
-        /// <param name="id">The ID to fetch the entity by</param>
-        /// <returns>The entity associated with the given ID</returns>
-        /// <exception cref="InvalidOperationException">The entity with the given ID doesn't exist</exception>
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MustGet(TIndex)"/>
         public static TEntity MustGet(TIndex id)
-        {
-            return _Factory.MustGet(id);
-        }
+            => _Factory.MustGet(id);
 
-        public static TEntity GetBy(Func<TEntity, bool> predicate)
-        {
-            return _Factory.GetBy(predicate);
-        }
-
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetOrCreate"/>
         protected static TEntity GetOrCreate(Func<TEntity> dalGetter, Func<TEntity> dalCreator)
-        {
-            return _Factory.GetOrCreate(dalGetter, dalCreator);
-        }
+            => _Factory.GetOrCreate(dalGetter, dalCreator);
 
-        // Sorry for the inconsistent naming scheme, but we need this to not be public by default,
-        // and to not conflict with EnumeratorEntity.GetAll()
-        protected static ICollection<TEntity> DoGetAll()
-        {
-            return _Factory.GetAll();
-        }
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetAll"/>
+        protected static ICollection<TEntity> GetAll()
+            => _Factory.GetAll();
 
         #endregion | Data Access Methods |
 
-        public static IEntityFactory<TEntity, TIndex> GetHelper()
-            => new CacheableEntityFactory<TEntity, TIndex, TDatabase>();
-
-        public static IRobloxEntityFactory<TEntity, TIndex> GetFactory()
-            => new RobloxEntityFactory<TEntity, TIndex>(_Helper);
-
-        private static readonly IEntityFactory<TEntity, TIndex> _Helper = GetHelper();
-        private static readonly IRobloxEntityFactory<TEntity, TIndex> _Factory = GetFactory();
+        private static readonly InternalRobloxEntityFactory<TEntity, TIndex, TDatabase> _Factory
+            = new InternalRobloxEntityFactory<TEntity, TIndex, TDatabase>();
     }
 }

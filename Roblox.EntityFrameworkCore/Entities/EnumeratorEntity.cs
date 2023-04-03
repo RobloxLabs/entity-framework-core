@@ -7,7 +7,7 @@ namespace Roblox.EntityFrameworkCore.Entities
     /// <summary>
     /// An entity that tries to serve the purpose of a data-bound enum.
     /// </summary>
-    public class EnumeratorEntity<TEntity, TIndex, TDatabase> : RobloxEntity<TEntity, TIndex, TDatabase>
+    public abstract class EnumeratorEntity<TEntity, TIndex, TDatabase> : RobloxEntity<TEntity, TIndex, TDatabase>, IEnumeratorEntity<TIndex>
         where TEntity : EnumeratorEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
@@ -77,9 +77,10 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// Gets all entities in the table.
         /// </summary>
         /// <returns>An <see cref="ICollection{TEntity}"/> of entities</returns>
-        public static ICollection<TEntity> GetAll()
+        public static new ICollection<TEntity> GetAll()
         {
-            return DoGetAll();
+            // Dumb hack
+            return RobloxEntity<TEntity, TIndex, TDatabase>.GetAll();
         }
 
         #endregion | CRUD Methods |
