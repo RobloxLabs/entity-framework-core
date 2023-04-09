@@ -51,6 +51,15 @@ namespace Roblox.EntityFrameworkCore.Factories
             return base.MultiGetEntityByPredicate(predicate);
         }
 
+        public override ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
+        {
+            return base.MultiGetEntityByPredicate(
+                predicate: predicate,
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
+        }
+
         public override TEntity GetEntity(TIndex id)
         {
             return base.GetEntity(id);

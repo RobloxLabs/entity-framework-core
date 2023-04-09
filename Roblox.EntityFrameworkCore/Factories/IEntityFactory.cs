@@ -33,6 +33,19 @@ namespace Roblox.EntityFrameworkCore.Factories
         ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate);
 
         /// <summary>
+        /// Gets a collection of entities by the given predicate.
+        /// Also comes with paging support!
+        /// </summary>
+        /// <remarks>
+        /// NOTE: Does not work with 64-bit IDs
+        /// </remarks>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="startRowIndex"></param>
+        /// <param name="maximumRows"></param>
+        /// <returns>A collection of entities.</returns>
+        ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate, int startRowIndex, int maximumRows);
+
+        /// <summary>
         /// Gets the entity associated with the given ID.
         /// </summary>
         /// <param name="id">The ID to fetch the entity by</param>

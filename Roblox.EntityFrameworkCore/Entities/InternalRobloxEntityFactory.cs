@@ -34,10 +34,20 @@ namespace Roblox.EntityFrameworkCore.Entities
             return base.MustGetBy(predicate);
         }
 
-        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy"/>
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy(Predicate{T})"/>
         public new ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate)
         {
             return base.MultiGetBy(predicate);
+        }
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy(Predicate{T}, int, int"/>
+        public new ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
+        {
+            return base.MultiGetBy(
+                predicate: predicate,
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
         }
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetOrCreate"/>

@@ -74,6 +74,16 @@ namespace Roblox.EntityFrameworkCore.Factories
             ).ToList();
         }
 
+        public virtual ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
+        {
+            var pred = new Func<TEntity, bool>(predicate);
+            return ReadEntity(
+                (table) => table.Where(pred)
+            ).Skip(startRowIndex)
+            .Take(maximumRows)
+            .ToList();
+        }
+
         public virtual TEntity GetEntity(TIndex id)
         {
             return GetEntityByPredicate(entity => entity.ID.Equals(id));

@@ -17,6 +17,7 @@ namespace Roblox.EntityFrameworkCore
     /// <typeparam name="TEntity">The entity's type.</typeparam>
     /// <typeparam name="TIndex">The type to use for the entity's index.</typeparam>
     /// <typeparam name="TDatabase">The database to use for the entity.</typeparam>
+    [Serializable]
     public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IComparable<TIndex>
@@ -64,9 +65,17 @@ namespace Roblox.EntityFrameworkCore
         protected static TEntity MustGetBy(Predicate<TEntity> predicate)
             => _Factory.MustGetBy(predicate);
 
-        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy"/>
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy(Predicate{T})"/>
         protected static ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate)
             => _Factory.MultiGetBy(predicate);
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MultiGetBy(Predicate{T}, int, int)"/>
+        protected static ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
+            => _Factory.MultiGetBy(
+                predicate: predicate,
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Get(TIndex)"/>
         public static TEntity Get(TIndex id)

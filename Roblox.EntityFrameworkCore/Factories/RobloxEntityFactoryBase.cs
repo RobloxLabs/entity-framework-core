@@ -31,10 +31,20 @@ namespace Roblox.EntityFrameworkCore.Factories
             return _Factory.MustGetEntityByPredicate(predicate);
         }
 
-        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.MultiGetEntityByPredicate"/>
+        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.MultiGetEntityByPredicate(Predicate{T})"/>
         protected virtual ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate)
         {
             return _Factory.MultiGetEntityByPredicate(predicate);
+        }
+
+        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.MultiGetEntityByPredicate(Predicate{T}, int, int)"/>
+        protected virtual ICollection<TEntity> MultiGetBy(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
+        {
+            return _Factory.MultiGetEntityByPredicate(
+                predicate: predicate,
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
         }
 
         public virtual TEntity Get(TIndex id)
