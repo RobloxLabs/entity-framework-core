@@ -14,8 +14,8 @@ namespace Roblox.EntityFrameworkCore.Factories
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
-        protected readonly IEntityFactory<TEntity, TIndex> _Factory
-            = new CacheableEntityFactory<TEntity, TIndex, TDatabase>();
+        protected IEntityFactory<TEntity, TIndex> _Factory
+            = new EntityFactory<TEntity, TIndex, TDatabase>();
 
         // NOTE: The "GetBy" methods are protected to force specific "GetBy[ColumnA]" methods to be defined in the entity's definition,
         // rather than calling GetBy(predicate) outside of the entity.

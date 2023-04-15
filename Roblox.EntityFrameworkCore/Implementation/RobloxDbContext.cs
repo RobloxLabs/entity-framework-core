@@ -1,32 +1,28 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Roblox.Databases;
 
 namespace Roblox.EntityFrameworkCore
 {
     public sealed class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
         where TEntity : class, IRobloxEntity<TIndex>
-
-        where TDatabase :
-        // C# 11.0
-#if NET7_0_OR_GREATER
-        IGlobalDatabase // (has static ConnectionString property)
-#else
-        GlobalDatabase<TDatabase>, new() // (can create new instance)
-#endif
+        where TDatabase : IGlobalDatabase, new()
     {
+        private static readonly IMemoryCache _MemoryCache;
+
         private IGlobalDatabase _Database;
 
         public DbSet<TEntity> Table { get; set; }
 
+        static RobloxDbContext()
+        {
+            var memoryCacheOptions = new MemoryCacheOptions();
+            _MemoryCache = new MemoryCache(memoryCacheOptions);
+        }
 
         public RobloxDbContext()
         {
-            // C# 11.0
-#if NET7_0_OR_GREATER
-            _Database = TDatabase.Singleton;
-#else
             _Database = new TDatabase();
-#endif
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -45,6 +41,9 @@ namespace Roblox.EntityFrameworkCore
                     options.UseMySql(db.ConnectionString);
                     break;
             }
+
+            // Query caching
+            options.UseMemoryCache(_MemoryCache);
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)

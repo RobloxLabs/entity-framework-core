@@ -22,6 +22,16 @@ namespace Roblox.EntityFrameworkCore.Entities
         where TIndex : struct, IComparable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
+        public InternalRobloxEntityFactory()
+        {
+
+        }
+
+        public InternalRobloxEntityFactory(IEntityFactory<TEntity, TIndex> factory)
+        {
+            _Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        }
+
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetBy"/>
         public new TEntity GetBy(Predicate<TEntity> predicate)
         {

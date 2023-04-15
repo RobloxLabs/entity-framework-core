@@ -41,7 +41,7 @@ namespace Roblox.EntityFrameworkCore
 #endif
         }
 
-#endregion | Entity Properties |
+        #endregion | Entity Properties |
 
         #region | Entity Methods |
 

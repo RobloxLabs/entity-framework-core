@@ -79,8 +79,9 @@ namespace Roblox.EntityFrameworkCore.Factories
             var pred = new Func<TEntity, bool>(predicate);
             return ReadEntity(
                 (table) => table.Where(pred)
-            ).Skip(startRowIndex)
-            .Take(maximumRows)
+                .Skip(startRowIndex)
+                .Take(maximumRows)
+            )
             .ToList();
         }
 

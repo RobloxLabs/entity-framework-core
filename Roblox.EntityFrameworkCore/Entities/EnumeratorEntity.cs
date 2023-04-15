@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Roblox.Databases;
 
 namespace Roblox.EntityFrameworkCore.Entities
@@ -17,6 +18,7 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// <summary>
         /// The value assigned to the enum.
         /// </summary>
+        [Required]
         public string Value { get; set; }
 
         #endregion | Properties |
