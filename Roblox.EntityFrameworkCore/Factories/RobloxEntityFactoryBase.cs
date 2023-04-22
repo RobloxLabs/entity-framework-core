@@ -11,7 +11,7 @@ namespace Roblox.EntityFrameworkCore.Factories
     /// </summary>
     public abstract class RobloxEntityFactoryBase<TEntity, TIndex, TDatabase>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
-        where TIndex : struct, IComparable<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         protected IEntityFactory<TEntity, TIndex> _Factory
@@ -69,6 +69,16 @@ namespace Roblox.EntityFrameworkCore.Factories
         protected virtual ICollection<TEntity> GetAll()
         {
             return _Factory.GetAllEntities();
+        }
+
+        // NOTE: This is protected since not all entities should be able to have their entire tables fetched by default.
+        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.GetAllEntities(int, int)"/>
+        protected virtual ICollection<TEntity> GetAll(int startRowIndex, int maximumRows)
+        {
+            return _Factory.GetAllEntities(
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
         }
 
         // NOTE: This is protected so someone can't specify inserters and updaters outside an entity's definition.

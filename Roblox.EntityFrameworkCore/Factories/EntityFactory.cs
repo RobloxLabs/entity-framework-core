@@ -9,7 +9,7 @@ namespace Roblox.EntityFrameworkCore.Factories
     /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}"/>
     public class EntityFactory<TEntity, TIndex, TDatabase> : IEntityFactory<TEntity, TIndex>
         where TEntity : class, IRobloxEntity<TIndex>
-        where TIndex : struct, IComparable<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         #region | Data Access Methods |
@@ -97,7 +97,16 @@ namespace Roblox.EntityFrameworkCore.Factories
 
         public virtual ICollection<TEntity> GetAllEntities()
         {
-            return ReadEntity((table) => table.ToList());
+            return ReadEntity((table) => table).ToList();
+        }
+
+        public virtual ICollection<TEntity> GetAllEntities(int startRowIndex, int maximumRows)
+        {
+            return ReadEntity(
+                (table) => table
+                .Skip(startRowIndex)
+                .Take(maximumRows)
+            ).ToList();
         }
 
         public virtual TEntity GetOrCreateEntity(Func<TEntity> dalGetter, Func<TEntity> dalCreator)
@@ -114,7 +123,7 @@ namespace Roblox.EntityFrameworkCore.Factories
 
         public virtual void SaveEntity(TEntity entity, Action dalInserter, Action dalUpdater)
         {
-            if (entity.ID.CompareTo(default) == 0)
+            if (entity.ID.Equals(default))
             {
                 dalInserter();
                 CreateEntity(entity);

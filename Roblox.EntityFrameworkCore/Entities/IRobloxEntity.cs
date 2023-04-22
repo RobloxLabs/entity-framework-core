@@ -25,7 +25,7 @@ namespace Roblox.EntityFrameworkCore
     }
 
     /// <inheritdoc/>
-    public interface IRobloxEntity<TEntity, TIndex> : IRobloxEntity<TIndex>
+    public interface IRobloxEntity<TEntity, TIndex> : IRobloxEntity<TIndex>, IEquatable<TEntity>
     {
         // C# 11.0
 #if NET7_0_OR_GREATER

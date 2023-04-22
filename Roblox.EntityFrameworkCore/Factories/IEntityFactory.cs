@@ -75,6 +75,18 @@ namespace Roblox.EntityFrameworkCore.Factories
         ICollection<TEntity> GetAllEntities();
 
         /// <summary>
+        /// Gets all known <see cref="TEntity"/>s in the table.
+        /// Also comes with paging support!
+        /// </summary>
+        /// <remarks>
+        /// NOTE: Does not work with 64-bit IDs
+        /// </remarks>
+        /// <param name="startRowIndex"></param>
+        /// <param name="maximumRows"></param>
+        /// <returns>An <see cref="ICollection{TEntity}"/> of <see cref="TEntity"/>s</returns>
+        ICollection<TEntity> GetAllEntities(int startRowIndex, int maximumRows);
+
+        /// <summary>
         /// Inserts or updates the given entity in the database.
         /// </summary>
         /// <param name="entity">The entity to save to the database.</param>

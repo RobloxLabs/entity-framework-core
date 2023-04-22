@@ -20,7 +20,7 @@ namespace Roblox.EntityFrameworkCore
     [Serializable]
     public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
-        where TIndex : struct, IComparable<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         #region | Entity Properties |
@@ -89,9 +89,20 @@ namespace Roblox.EntityFrameworkCore
             return null;
         }
 
+        // TODO: public static ICollection<TEntity> MultiGet(ICollection<TIndex> ids)
+
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.MustGet(TIndex)"/>
         public static TEntity MustGet(TIndex id)
             => _Factory.MustGet(id);
+
+        /// <inheritdoc cref="MustGet(TIndex)"/>
+        public static TEntity MustGet(TIndex? id)
+        {
+            if (id.HasValue)
+                return Get(id.Value);
+            else
+                throw new InvalidOperationException("ID of entity was null when attempting MustGet");
+        }
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetOrCreate"/>
         protected static TEntity GetOrCreate(Func<TEntity> dalGetter, Func<TEntity> dalCreator)
@@ -101,7 +112,25 @@ namespace Roblox.EntityFrameworkCore
         protected static ICollection<TEntity> GetAll()
             => _Factory.GetAll();
 
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetAll"/>
+        protected static ICollection<TEntity> GetAll(int startRowIndex, int maximumRows)
+            => _Factory.GetAll(
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
+
         #endregion | Data Access Methods |
+
+        #region | IEquatable Members |
+
+        public bool Equals(TEntity other)
+        {
+            TIndex id = this.ID;
+            TIndex? num = (other != null) ? new TIndex?(other.ID) : null;
+            return id.Equals(num.GetValueOrDefault()) & num != null;
+        }
+
+        #endregion | IEquatable Members |
 
         private static readonly InternalRobloxEntityFactory<TEntity, TIndex, TDatabase> _Factory
             = new InternalRobloxEntityFactory<TEntity, TIndex, TDatabase>();

@@ -19,7 +19,7 @@ namespace Roblox.EntityFrameworkCore.Entities
     /// </remarks>
     internal sealed class InternalRobloxEntityFactory<TEntity, TIndex, TDatabase> : RobloxEntityFactoryBase<TEntity, TIndex, TDatabase>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
-        where TIndex : struct, IComparable<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         public InternalRobloxEntityFactory()
@@ -70,6 +70,15 @@ namespace Roblox.EntityFrameworkCore.Entities
         public new ICollection<TEntity> GetAll()
         {
             return base.GetAll();
+        }
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetAll(int, int)"/>
+        public new ICollection<TEntity> GetAll(int startRowIndex, int maximumRows)
+        {
+            return base.GetAll(
+                startRowIndex: startRowIndex,
+                maximumRows: maximumRows
+            );
         }
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Save(TEntity, Action, Action)"/>

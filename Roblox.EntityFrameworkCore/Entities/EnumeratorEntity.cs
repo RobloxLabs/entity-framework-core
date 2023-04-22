@@ -10,7 +10,7 @@ namespace Roblox.EntityFrameworkCore.Entities
     /// </summary>
     public abstract class EnumeratorEntity<TEntity, TIndex, TDatabase> : RobloxEntity<TEntity, TIndex, TDatabase>, IEnumeratorEntity<TIndex>
         where TEntity : EnumeratorEntity<TEntity, TIndex, TDatabase>, new()
-        where TIndex : struct, IComparable<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
         #region | Properties |
