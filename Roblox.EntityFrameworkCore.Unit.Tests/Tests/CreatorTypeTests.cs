@@ -53,7 +53,7 @@ namespace Roblox.EntityFrameworkCore.Unit.Tests
         [InlineData("Group2")]
         public void GetCreatorTypeByID(string expectedValue)
         {
-            var creatorTypeTemp = CreatorType.Create(expectedValue);
+            var creatorTypeTemp = CreatorType.CreateNew(expectedValue);
             var creatorType = CreatorType.Get(creatorTypeTemp.ID);
             creatorTypeTemp.Delete();
 
@@ -92,7 +92,7 @@ namespace Roblox.EntityFrameworkCore.Unit.Tests
         [InlineData("Group4")]
         public void CreatorTypesContains(string expectedValue)
         {
-            var creatorType = CreatorType.Create(expectedValue);
+            var creatorType = CreatorType.CreateNew(expectedValue);
             var creatorTypes = GetCreatorTypes();
             creatorType.Delete();
 

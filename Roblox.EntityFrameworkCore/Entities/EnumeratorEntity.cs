@@ -53,7 +53,7 @@ namespace Roblox.EntityFrameworkCore.Entities
         {
             return GetOrCreate(
                 () => Get(value),
-                () => Create(value)
+                () => CreateNew(value)
             );
         }
 
@@ -62,7 +62,7 @@ namespace Roblox.EntityFrameworkCore.Entities
         /// </summary>
         /// <param name="value"></param>
         /// <returns>The created entity</returns>
-        public static TEntity Create(string value)
+        public static TEntity CreateNew(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) throw new ArgumentNullException(nameof(value));
 

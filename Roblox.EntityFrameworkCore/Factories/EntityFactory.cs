@@ -71,7 +71,8 @@ namespace Roblox.EntityFrameworkCore.Factories
             var pred = new Func<TEntity, bool>(predicate);
             return ReadEntity(
                 (table) => table.Where(pred)
-            ).ToList();
+                .ToList()
+            );
         }
 
         public virtual ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
@@ -81,8 +82,8 @@ namespace Roblox.EntityFrameworkCore.Factories
                 (table) => table.Where(pred)
                 .Skip(startRowIndex)
                 .Take(maximumRows)
-            )
-            .ToList();
+                .ToList()
+            );
         }
 
         public virtual TEntity GetEntity(TIndex id)
@@ -97,7 +98,7 @@ namespace Roblox.EntityFrameworkCore.Factories
 
         public virtual ICollection<TEntity> GetAllEntities()
         {
-            return ReadEntity((table) => table).ToList();
+            return ReadEntity((table) => table.ToList());
         }
 
         public virtual ICollection<TEntity> GetAllEntities(int startRowIndex, int maximumRows)
@@ -106,7 +107,8 @@ namespace Roblox.EntityFrameworkCore.Factories
                 (table) => table
                 .Skip(startRowIndex)
                 .Take(maximumRows)
-            ).ToList();
+                .ToList()
+            );
         }
 
         public virtual TEntity GetOrCreateEntity(Func<TEntity> dalGetter, Func<TEntity> dalCreator)
