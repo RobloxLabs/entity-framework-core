@@ -87,6 +87,19 @@ namespace Roblox.EntityFrameworkCore.Factories
         ICollection<TEntity> GetAllEntities(int startRowIndex, int maximumRows);
 
         /// <summary>
+        /// Gets a total count of entities in a table.
+        /// </summary>
+        /// <returns>The total number of entities.</returns>
+        int GetEntityCount();
+
+        /// <summary>
+        /// Gets a count of entities in a table based on a predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <returns>The total number of entities.</returns>
+        int GetEntityCountByPredicate(Predicate<TEntity> predicate);
+
+        /// <summary>
         /// Inserts or updates the given entity in the database.
         /// </summary>
         /// <param name="entity">The entity to save to the database.</param>

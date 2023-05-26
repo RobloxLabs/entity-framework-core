@@ -18,7 +18,7 @@ namespace Roblox.EntityFrameworkCore.Entities
     /// Also, it might be possible to define internal public versions of these methods inside the original base class.
     /// </remarks>
     internal sealed class InternalRobloxEntityFactory<TEntity, TIndex, TDatabase> : RobloxEntityFactoryBase<TEntity, TIndex, TDatabase>
-        where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
+        where TEntity : RobloxEntityBase<TEntity, TIndex>, new()
         where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
@@ -79,6 +79,18 @@ namespace Roblox.EntityFrameworkCore.Entities
                 startRowIndex: startRowIndex,
                 maximumRows: maximumRows
             );
+        }
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetCount"/>
+        public new int GetCount()
+        {
+            return base.GetCount();
+        }
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetCountBy"/>
+        public new int GetCountBy(Predicate<TEntity> predicate)
+        {
+            return base.GetCountBy(predicate);
         }
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Save(TEntity, Action, Action)"/>

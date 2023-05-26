@@ -23,7 +23,7 @@ namespace Roblox.EntityFrameworkCore.Factories
             }
         }
 
-        protected virtual T ReadEntity<T>(Func<DbSet<TEntity>, T> queryFunc)
+        protected virtual T QueryData<T>(Func<DbSet<TEntity>, T> queryFunc)
         {
             T result = default;
 
@@ -56,7 +56,7 @@ namespace Roblox.EntityFrameworkCore.Factories
         public virtual TEntity GetEntityByPredicate(Predicate<TEntity> predicate)
         {
             var pred = new Func<TEntity, bool>(predicate);
-            return ReadEntity(
+            return QueryData(
                 (table) => table.FirstOrDefault(pred)
             );
         }
@@ -69,7 +69,7 @@ namespace Roblox.EntityFrameworkCore.Factories
         public virtual ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate)
         {
             var pred = new Func<TEntity, bool>(predicate);
-            return ReadEntity(
+            return QueryData(
                 (table) => table.Where(pred)
                 .ToList()
             );
@@ -78,7 +78,7 @@ namespace Roblox.EntityFrameworkCore.Factories
         public virtual ICollection<TEntity> MultiGetEntityByPredicate(Predicate<TEntity> predicate, int startRowIndex, int maximumRows)
         {
             var pred = new Func<TEntity, bool>(predicate);
-            return ReadEntity(
+            return QueryData(
                 (table) => table.Where(pred)
                 .Skip(startRowIndex)
                 .Take(maximumRows)
@@ -98,16 +98,32 @@ namespace Roblox.EntityFrameworkCore.Factories
 
         public virtual ICollection<TEntity> GetAllEntities()
         {
-            return ReadEntity((table) => table.ToList());
+            return QueryData((table) => table.ToList());
         }
 
         public virtual ICollection<TEntity> GetAllEntities(int startRowIndex, int maximumRows)
         {
-            return ReadEntity(
+            return QueryData(
                 (table) => table
                 .Skip(startRowIndex)
                 .Take(maximumRows)
                 .ToList()
+            );
+        }
+
+        public virtual int GetEntityCount()
+        {
+            return QueryData(
+                (table) => table.Count()
+            );
+        }
+
+        public virtual int GetEntityCountByPredicate(Predicate<TEntity> predicate)
+        {
+            var pred = new Func<TEntity, bool>(predicate);
+            return QueryData(
+                (table) => table.Where(pred)
+                .Count()
             );
         }
 

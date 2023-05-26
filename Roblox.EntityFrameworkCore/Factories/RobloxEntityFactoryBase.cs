@@ -9,8 +9,8 @@ namespace Roblox.EntityFrameworkCore.Factories
     /// An alternative (and instantiable) way to fetch entities.
     /// Intended to be inherited and modified to your heart's content.
     /// </summary>
-    public abstract class RobloxEntityFactoryBase<TEntity, TIndex, TDatabase>
-        where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
+    public abstract class RobloxEntityFactoryBase<TEntity, TIndex, TDatabase> : IRobloxEntityFactory<TEntity, TIndex>
+        where TEntity : RobloxEntityBase<TEntity, TIndex>
         where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
@@ -81,17 +81,27 @@ namespace Roblox.EntityFrameworkCore.Factories
             );
         }
 
+        // NOTE: This is protected since not all entities should be able to have their entire tables counted by default.
+        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.GetEntityCount"/>
+        protected virtual int GetCount()
+        {
+            return _Factory.GetEntityCount();
+        }
+
+        // NOTE: This is protected since not all entities should be able to have their entire tables counted by default.
+        /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.GetEntityCountByPredicate"/>
+        protected virtual int GetCountBy(Predicate<TEntity> predicate)
+        {
+            return _Factory.GetEntityCountByPredicate(predicate);
+        }
+
         // NOTE: This is protected so someone can't specify inserters and updaters outside an entity's definition.
         /// <inheritdoc cref="IEntityFactory{TEntity, TIndex}.SaveEntity"/>
         protected virtual void Save(TEntity entity, Action dalInserter, Action dalUpdater)
         {
             _Factory.SaveEntity(entity, dalInserter, dalUpdater);
         }
-
-        /// <summary>
-        /// Saves the given entity to the database.
-        /// </summary>
-        /// <param name="entity">The entity to save.</param>
+        
         public virtual void Save(TEntity entity)
         {
             _Factory.SaveEntity(

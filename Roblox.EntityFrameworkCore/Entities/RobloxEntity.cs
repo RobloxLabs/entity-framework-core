@@ -18,31 +18,11 @@ namespace Roblox.EntityFrameworkCore
     /// <typeparam name="TIndex">The type to use for the entity's index.</typeparam>
     /// <typeparam name="TDatabase">The database to use for the entity.</typeparam>
     [Serializable]
-    public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : IRobloxEntity<TEntity, TIndex>
+    public abstract class RobloxEntity<TEntity, TIndex, TDatabase> : RobloxEntityBase<TEntity, TIndex>
         where TEntity : RobloxEntity<TEntity, TIndex, TDatabase>, new()
         where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
-        #region | Entity Properties |
-
-        public DateTime Created { get; internal set; }
-        public DateTime Updated { get; internal set; }
-
-        // Put below Created & Updated to have serialized versions of
-        // the entity look less bad.
-        [Key]
-        public TIndex ID
-        {
-            get;
-#if NET5_0_OR_GREATER
-            internal init;
-#else
-            private set;
-#endif
-        }
-
-        #endregion | Entity Properties |
-
         #region | Entity Methods |
 
         /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.Save(TEntity)"/>
@@ -119,18 +99,15 @@ namespace Roblox.EntityFrameworkCore
                 maximumRows: maximumRows
             );
 
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetCount"/>
+        protected static int GetCount()
+            => _Factory.GetCount();
+
+        /// <inheritdoc cref="RobloxEntityFactoryBase{TEntity, TIndex, TDatabase}.GetCountBy"/>
+        protected static int GetCountBy(Predicate<TEntity> predicate)
+            => _Factory.GetCountBy(predicate);
+
         #endregion | Data Access Methods |
-
-        #region | IEquatable Members |
-
-        public bool Equals(TEntity other)
-        {
-            TIndex id = this.ID;
-            TIndex? num = (other != null) ? new TIndex?(other.ID) : null;
-            return id.Equals(num.GetValueOrDefault()) & num != null;
-        }
-
-        #endregion | IEquatable Members |
 
         private static readonly InternalRobloxEntityFactory<TEntity, TIndex, TDatabase> _Factory
             = new InternalRobloxEntityFactory<TEntity, TIndex, TDatabase>();
