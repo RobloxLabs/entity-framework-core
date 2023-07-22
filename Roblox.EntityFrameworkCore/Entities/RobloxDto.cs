@@ -7,9 +7,7 @@ namespace Roblox.EntityFrameworkCore
     /// A more slimmed-down version of RobloxEntity.
     /// Excludes all static methods. Intended for use with factories.
     /// </summary>
-    public class RobloxEntityBase<TEntity, TIndex> : IRobloxEntity<TEntity, TIndex>
-        where TEntity : IRobloxEntity<TIndex>
-        where TIndex : struct, IEquatable<TIndex>
+    public class RobloxDto<TIndex> : IRobloxDto<TIndex>
     {
         #region | Entity Properties |
 
@@ -19,21 +17,19 @@ namespace Roblox.EntityFrameworkCore
         // Put below Created & Updated to have serialized versions of
         // the entity look less bad.
         [Key]
-        public TIndex ID
-        {
-            get;
-#if NET5_0_OR_GREATER
-            internal init;
-#else
-            private set;
-#endif
-        }
+        public TIndex ID { get; internal set; }
 
         #endregion | Entity Properties |
+    }
 
+    /// <inheritdoc/>
+    public class RobloxDto<TDto, TIndex> : RobloxDto<TIndex>, IRobloxDto<TDto, TIndex>
+        where TDto : IRobloxDto<TIndex>
+        where TIndex : struct, IEquatable<TIndex>
+    {
         #region | IEquatable Members |
 
-        public bool Equals(TEntity other)
+        public bool Equals(TDto other)
         {
             TIndex id = this.ID;
             TIndex? num = (other != null) ? new TIndex?(other.ID) : null;

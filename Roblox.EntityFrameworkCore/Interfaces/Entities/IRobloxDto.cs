@@ -3,10 +3,11 @@
 namespace Roblox.EntityFrameworkCore
 {
     /// <summary>
-    /// New IRobloxEntity without the reliance on a DAL
+    /// New IRobloxEntity without the reliance on a DAL.
+    /// The RobloxEntity class will build upon this.
     /// </summary>
     /// <typeparam name="TIndex"></typeparam>
-    public interface IRobloxEntity<TIndex>
+    public interface IRobloxDto<TIndex>
     {
         /// <summary>
         /// The timestamp to mark when the entity was created
@@ -25,7 +26,7 @@ namespace Roblox.EntityFrameworkCore
     }
 
     /// <inheritdoc/>
-    public interface IRobloxEntity<TEntity, TIndex> : IRobloxEntity<TIndex>, IEquatable<TEntity>
+    public interface IRobloxDto<TDto, TIndex> : IRobloxDto<TIndex>, IEquatable<TDto>
     {
     }
 }

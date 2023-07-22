@@ -5,7 +5,7 @@ using Roblox.Databases;
 namespace Roblox.EntityFrameworkCore
 {
     public sealed class RobloxDbContext<TEntity, TIndex, TDatabase> : DbContext
-        where TEntity : class, IRobloxEntity<TIndex>
+        where TEntity : class, IRobloxDto<TIndex>
         where TDatabase : IGlobalDatabase, new()
     {
         private static readonly IMemoryCache _MemoryCache;

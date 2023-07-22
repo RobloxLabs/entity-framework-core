@@ -8,7 +8,7 @@ namespace Roblox.EntityFrameworkCore.Entities
     /// Internal interface for unit tests.
     /// </summary>
     /// <typeparam name="TIndex"></typeparam>
-    internal interface IEnumeratorEntity<TIndex> : IRobloxEntity<TIndex>
+    internal interface IEnumeratorEntity<TIndex> : IRobloxDto<TIndex>
     {
         string Value { get; set; }
     }
