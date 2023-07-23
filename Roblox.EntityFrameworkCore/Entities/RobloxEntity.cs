@@ -23,8 +23,38 @@ namespace Roblox.EntityFrameworkCore
         where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
-        private static readonly RobloxEntityFactory<TEntity, TIndex, TDatabase> _Factory
+        #region | Entity Factory Members |
+
+        /// <summary>
+        /// The factory backing the entity's CRUD methods.
+        /// </summary>
+        private static RobloxDtoFactoryBase<TEntity, TIndex, TDatabase> _Factory
             = new RobloxEntityFactory<TEntity, TIndex, TDatabase>();
+
+        /// <summary>
+        /// Configures the entity class to use the given factory for data management.
+        /// </summary>
+        /// <param name="factory">The factory.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="factory"/> was <see cref="null"/>.</exception>
+        protected static void SetEntityFactory(RobloxDtoFactoryBase<TEntity, TIndex, TDatabase> factory)
+        {
+            _Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+        }
+
+        /// <summary>
+        /// Constructs an entity factory and configures the entity class to use it for data management.
+        /// </summary>
+        /// <typeparam name="TFactory">The entity factory type.</typeparam>
+        /// <returns>The newly constructed entity factory.</returns>
+        protected static TFactory SetEntityFactory<TFactory>()
+            where TFactory : RobloxDtoFactoryBase<TEntity, TIndex, TDatabase>, new()
+        {
+            var factory = new TFactory();
+            SetEntityFactory(factory);
+            return factory;
+        }
+
+        #endregion | Entity Factory Members |
 
         #region | Entity Methods |
 

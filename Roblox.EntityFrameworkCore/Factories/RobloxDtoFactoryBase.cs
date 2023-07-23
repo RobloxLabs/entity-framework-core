@@ -18,7 +18,7 @@ namespace Roblox.EntityFrameworkCore.Factories
         where TIndex : struct, IEquatable<TIndex>
         where TDatabase : GlobalDatabase<TDatabase>, new()
     {
-        protected static RobloxDbContext<TDto, TIndex, TDatabase> GetDbContext()
+        private static RobloxDbContext<TDto, TIndex, TDatabase> GetDbContext()
             => new RobloxDbContext<TDto, TIndex, TDatabase>();
 
         #region | Core CRUD Methods |
